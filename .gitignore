@@ -1,1 +1,6 @@
-crosshalf.pdf
+.tup
+/.gitignore
+/mesh_after_trimming.scad
+/mesh_before_trimming.scad
+/pitot_constants.py
+/pitot_constants.pyc
