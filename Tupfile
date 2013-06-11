@@ -6,4 +6,7 @@
 
 #: |> openscad pitot.scad -o %o |> pitot.stl
 
+:|> clang++ hilbert.cpp `pkg-config --cflags --libs cairo` -o hilbert |> hilbert
+: hilbert |> hilbert >> hilbert_path.txt |> hilbert_path.txt hilbert_path.pdf
+
 .gitignore
