@@ -147,22 +147,22 @@ else:
     drill_depth = w_shell*1.5
     drill_stop_points = [v*(r-drill_depth) for v in outward_vectors]
 
-# Find the four closest nodes to the drill stop points, that have smaller x 
-def find_potential_entry_nodes(nodes,drill_stop_point,nkeep=4):
-    assert(len(nodes)>=nkeep)
-    layerbelow = [n for n in nodes if n[0] <= drill_stop_point[0]]
-    layerbelow.sort(key=lambda n: norm(array(n)-array(drill_stop_point)))
-    assert len(layerbelow>=nkeep)
-    return layerbelow[:nkeep]
+## Find the four closest nodes to the drill stop points, that have smaller x 
+#def find_potential_entry_nodes(nodes,drill_stop_point,nkeep=4):
+    #assert(len(nodes)>=nkeep)
+    #layerbelow = [n for n in nodes if n[0] <= drill_stop_point[0]]
+    #layerbelow.sort(key=lambda n: norm(array(n)-array(drill_stop_point)))
+    #assert len(layerbelow>=nkeep)
+    #return layerbelow[:nkeep]
 
-nodes = g.nodes()
-for p in drill_stop_points:
-    # Note, it is important for the behavior that
-    # the nodes and edges we are adding are ~not
-    # also added to the "nodes" that find_potential_entry_nodes uses.
-    # Otherwise, one drill stop point might route through another later.
-    entrynodes = find_potential_entry_nodes(nodes,p)
-    g.add_nodes(drill_stop_points)
-    for e in entrynodes:
-        g.add_edge(p,e)
+#nodes = g.nodes()
+#for p in drill_stop_points:
+    ## Note, it is important for the behavior that
+    ## the nodes and edges we are adding are ~not
+    ## also added to the "nodes" that find_potential_entry_nodes uses.
+    ## Otherwise, one drill stop point might route through another later.
+    #entrynodes = find_potential_entry_nodes(nodes,p)
+    #g.add_nodes(drill_stop_points)
+    #for e in entrynodes:
+        #g.add_edge(p,e)
 
