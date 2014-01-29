@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy
 from numpy import array
+from numpy.random import randn
 from pylab import norm
 from pygraph.classes.graph import graph
 
@@ -119,4 +120,49 @@ for n in external_nodes:
     g.del_node(n)
 
 codegen_graph(g,'mesh_after_trimming.scad')
+
+# Choose our normal vectors
+def random_vector_facing_out():
+    v = randn(3);
+    if v[0]<0:
+        v = v*-1.0
+    return v/norm(v)
+
+nholes = 2 
+outward_vectors = [random_vector_facing_out() for i in range(nholes)]
+
+# Sort holes by radius
+def cmp_by_radius(v1,v2):
+    r1 = v1[1]*v1[1] + v1[2]*v1[2]
+    r2 = v2[1]*v2[1] + v2[2]*v2[2]
+    return cmp(r1,r2)
+outward_vectors.sort(cmp_by_radius)
+
+drill_entry_points = [v*r for v in outward_vectors]
+use_laser = True
+if use_laser:
+    drill_depth = w_shell*2
+    drill_stop_points = [v - array([drill_depth,0,0]) for v in drill_entry_points]
+else:
+    drill_depth = w_shell*1.5
+    drill_stop_points = [v*(r-drill_depth) for v in outward_vectors]
+
+# Find the four closest nodes to the drill stop points, that have smaller x 
+def find_potential_entry_nodes(nodes,drill_stop_point,nkeep=4):
+    assert(len(nodes)>=nkeep)
+    layerbelow = [n for n in nodes if n[0] <= drill_stop_point[0]]
+    layerbelow.sort(key=lambda n: norm(array(n)-array(drill_stop_point)))
+    assert len(layerbelow>=nkeep)
+    return layerbelow[:nkeep]
+
+nodes = g.nodes()
+for p in drill_stop_points:
+    # Note, it is important for the behavior that
+    # the nodes and edges we are adding are ~not
+    # also added to the "nodes" that find_potential_entry_nodes uses.
+    # Otherwise, one drill stop point might route through another later.
+    entrynodes = find_potential_entry_nodes(nodes,p)
+    g.add_nodes(drill_stop_points)
+    for e in entrynodes:
+        g.add_edge(p,e)
 
